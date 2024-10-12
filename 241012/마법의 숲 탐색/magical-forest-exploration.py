@@ -101,7 +101,7 @@ def reset_forest():
 
 for idx, (start_column, outlet_dir) in enumerate(faries):
     value = idx + 1
-    # print("시작", "start_c", start_column, "outlet_dir", outlet_dir, value)
+    print("시작", "start_c", start_column, "outlet_dir", outlet_dir, value)
 
     center_y, center_x = 1, start_column
 
@@ -135,7 +135,7 @@ for idx, (start_column, outlet_dir) in enumerate(faries):
     # print("move result", center_y, center_x)
 
     # 최대한 내려갔는데도, 중심이 3보다 작다면 reset
-    if center_y < 3:
+    if center_y < 4:
         # print("reset\n")
         # print(*forest, sep="\n", end="\n\n")
         reset_forest()
@@ -190,7 +190,7 @@ for idx, (start_column, outlet_dir) in enumerate(faries):
 
     max_row = max(center_y + 1, find_maximum_row(outlet_y, outlet_x))
 
-    # print("도착", (center_y, center_x, outlet_dir), "max_row", max_row - 1, end="\n\n")
+    print("도착", (center_y, center_x, outlet_dir), "max_row", max_row - 1, end="\n\n")
 
     # print(*forest, sep="\n", end="\n\n")
 
