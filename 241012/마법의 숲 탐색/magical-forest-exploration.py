@@ -76,11 +76,11 @@ def move_golam(cy, cx, ny, nx):
 
     return ny, nx
 
-def rotate_outlet_reverse_clock_wise(outlet_dir: int) -> int:
+def rotate_outlet_clock_wise(outlet_dir: int) -> int:
     return (outlet_dir + 1) % 4
 
-def rotate_outlet_clock_wise(outlet_dir: int) -> int:
-    return (outlet_dir - 1) % 4
+def rotate_outlet_reverse_clock_wise(outlet_dir: int) -> int:
+    return (outlet_dir + 3) % 4
 
 def reset_forest():
     global forest
@@ -90,7 +90,7 @@ def reset_forest():
             forest[y][x] = 0
 
 for start_column, outlet_dir in faries:
-    # print("start_c", start_column, "outlet_dir", outlet_dir)
+    print("시작", "start_c", start_column, "outlet_dir", outlet_dir)
 
     center_y, center_x = 0, start_column
 
@@ -107,7 +107,7 @@ for start_column, outlet_dir in faries:
             is_next_golam_available(center_y, center_x - 1, 2):
 
             center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x - 1)
-            outlet_dir = rotate_outlet_clock_wise(outlet_dir)
+            outlet_dir = rotate_outlet_reverse_clock_wise(outlet_dir)
             continue
 
         # 3. 동쪽으로 한 칸, 아래로 한 칸 내려간다.
@@ -115,7 +115,7 @@ for start_column, outlet_dir in faries:
             is_next_golam_available(center_y, center_x + 1, 2):
 
             center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x + 1)
-            outlet_dir = rotate_outlet_reverse_clock_wise(outlet_dir)
+            outlet_dir = rotate_outlet_clock_wise(outlet_dir)
             continue
 
         # 더 이상 갈 수 없으므로 골렘의 이동을 멈춘다.
@@ -134,8 +134,6 @@ for start_column, outlet_dir in faries:
 
     # Phase 2. 골렘 내의 정령을 이동 시킨다.
     # 출구에서 시작해서, 모든 연결요소를 탐색한다. 그때의 최대 행 값을 구하자.
-    reset_golam(center_y, center_x)
-
     def find_maximum_row(y, x) -> int:
         global forest, R, C
 
@@ -174,12 +172,15 @@ for start_column, outlet_dir in faries:
 
         return ret
 
+    reset_golam(center_y, center_x)
+
     max_row = max(center_y + 1, find_maximum_row(center_y + dys[outlet_dir], center_x + dxs[outlet_dir]))
 
-    # print("max_row", max_row - 1)
+    print("도착", (center_y, center_x, outlet_dir), "max_row", max_row - 1, end="\n\n")
+    
     # print(*forest, sep="\n", end="\n\n")
 
-    ret += max_row - 1
+    ret += (max_row - 1)
 
     move_golam(center_y, center_x, center_y, center_x)
 
