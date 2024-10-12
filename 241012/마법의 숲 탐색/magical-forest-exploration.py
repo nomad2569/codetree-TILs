@@ -10,7 +10,7 @@ for _ in range(K):
 
 forest = [
     [0 for _ in range(C)]
-    for __ in range(R + 2)
+    for __ in range(R + 3)
 ]
 
 ret = 0
@@ -20,7 +20,7 @@ dxs = [0, 1, 0, -1, 0]
 
 
 def is_available(y, x) -> bool:
-    if y < 0 or y >= R + 2 or x < 0 or x >= C:
+    if y < 0 or y >= R + 3 or x < 0 or x >= C:
         return False
 
     return True
@@ -94,7 +94,7 @@ def rotate_outlet_reverse_clock_wise(outlet_dir: int) -> int:
 def reset_forest():
     global forest
 
-    for y in range(R + 2):
+    for y in range(R + 3):
         for x in range(C):
             forest[y][x] = 0
 
@@ -149,7 +149,7 @@ for idx, (start_column, outlet_dir) in enumerate(faries):
 
         visited = [
             [False for _ in range(C)]
-            for __ in range(R + 2)
+            for __ in range(R + 3)
         ]
 
         q = deque([(y, x)])
@@ -194,6 +194,6 @@ for idx, (start_column, outlet_dir) in enumerate(faries):
 
     # print(*forest, sep="\n", end="\n\n")
 
-    ret += (max_row - 1)
+    ret += (max_row - 2)
 
 print(ret)
