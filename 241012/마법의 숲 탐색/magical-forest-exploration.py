@@ -60,7 +60,7 @@ def reset_golam(cy, cx):
 
         forest[golam_y][golam_x] = 0
 
-def move_golam(cy, cx, ny, nx):
+def move_golam(cy, cx, ny, nx, value):
     global forest
     
     reset_golam(cy, cx)
@@ -72,7 +72,7 @@ def move_golam(cy, cx, ny, nx):
         if golam_y < 2:
             continue
 
-        forest[golam_y][golam_x] = 1
+        forest[golam_y][golam_x] = value
 
     return ny, nx
 
@@ -89,8 +89,9 @@ def reset_forest():
         for x in range(C):
             forest[y][x] = 0
 
-for start_column, outlet_dir in faries:
-    print("시작", "start_c", start_column, "outlet_dir", outlet_dir)
+for idx, (start_column, outlet_dir) in enumerate(faries):
+    value = idx + 1
+    # print("시작", "start_c", start_column, "outlet_dir", outlet_dir)
 
     center_y, center_x = 0, start_column
 
@@ -99,14 +100,14 @@ for start_column, outlet_dir in faries:
         reset_golam(center_y, center_x)
         # 1. 아래로 내려간다.
         if is_next_golam_available(center_y, center_x, 2):
-            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x)
+            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x, value)
             continue
             
         # 2. 서쪽으로 한 칸, 아래로 한 칸 내려간다.
         if is_next_golam_available(center_y, center_x, 3) and \
             is_next_golam_available(center_y, center_x - 1, 2):
 
-            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x - 1)
+            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x - 1, value)
             outlet_dir = rotate_outlet_reverse_clock_wise(outlet_dir)
             continue
 
@@ -114,13 +115,13 @@ for start_column, outlet_dir in faries:
         if is_next_golam_available(center_y, center_x, 1) and \
             is_next_golam_available(center_y, center_x + 1, 2):
 
-            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x + 1)
+            center_y, center_x = move_golam(center_y, center_x, center_y + 1, center_x + 1, value)
             outlet_dir = rotate_outlet_clock_wise(outlet_dir)
             continue
 
         # 더 이상 갈 수 없으므로 골렘의 이동을 멈춘다.
         # print("move end")
-        move_golam(center_y, center_x, center_y, center_x)
+        move_golam(center_y, center_x, center_y, center_x, value)
         break
 
     # print("move result", center_y, center_x)
@@ -158,30 +159,39 @@ for start_column, outlet_dir in faries:
                 if not is_available(ny, nx):
                     continue
 
-                if forest[ny][nx] != 1:
-                    continue
-
                 if visited[ny][nx]:
                     continue
 
-                q.append(
-                    (ny, nx)
-                )
+                # 1. 같은 골렘 내에서 움직일 때
+                # 2. 다른 골렘으로 나갈 때
+                if forest[ny][nx] != 0 and \
+                    (abs(forest[ny][nx]) == abs(forest[cy][cx]) or \
+                        forest[cy][cx] < 0):
+                    
+                    q.append(
+                        (ny, nx)
+                    )
 
-                visited[ny][nx] = True
+                    visited[ny][nx] = True
 
         return ret
 
     reset_golam(center_y, center_x)
+    outlet_y, outlet_x = center_y + dys[outlet_dir], center_x + dxs[outlet_dir]
+    forest[outlet_y][outlet_x] = -value
 
-    max_row = max(center_y + 1, find_maximum_row(center_y + dys[outlet_dir], center_x + dxs[outlet_dir]))
+    max_row = max(center_y + 1, find_maximum_row(outlet_y, outlet_x))
 
-    print("도착", (center_y, center_x, outlet_dir), "max_row", max_row - 1, end="\n\n")
+    # print("도착", (center_y, center_x, outlet_dir), "max_row", max_row - 1, end="\n\n")
     
     # print(*forest, sep="\n", end="\n\n")
 
     ret += (max_row - 1)
 
-    move_golam(center_y, center_x, center_y, center_x)
+    move_golam(center_y, center_x, center_y, center_x, value)
+
+    # 출구를 표시해둔다.
+    forest[outlet_y][outlet_x] = -value
+
 
 print(ret)
