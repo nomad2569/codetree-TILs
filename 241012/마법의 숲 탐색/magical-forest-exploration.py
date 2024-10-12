@@ -103,7 +103,7 @@ for idx, (start_column, outlet_dir) in enumerate(faries):
     value = idx + 1
     # print("시작", "start_c", start_column, "outlet_dir", outlet_dir, value)
 
-    center_y, center_x = 0, start_column
+    center_y, center_x = 1, start_column
 
     # Phase 1. 골렘을 최대한 아래로 내려보낸다.
     while True:
